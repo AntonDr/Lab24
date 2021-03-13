@@ -1,0 +1,84 @@
+﻿@model PagedList.IPagedList<LabProductUI.Models.Product>
+@using LabProductUI.Models
+@using PagedList.Mvc
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+@{
+    ViewBag.Title = "Index";
+}
+<h2>Index</h2>
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+@using (Html.BeginForm("Index", "Products", FormMethod.Get))
+{
+<p>
+    Find by Category: @Html.DropDownList("CurrentFilter", EnumHelper.GetSelectList(typeof(CategoryEnum)),
+"Select Category",
+new { @class = "form-control" })
+    <input type="submit" value="Search" />
+</p>
+}
+    <table class="table">
+        <tr>
+        <tr>
+            <th>
+                @Html.ActionLink("Name", "Index", new { SortOrder = ViewBag.NameSortParameter})
+            </th>
+            <th>
+                @Html.ActionLink("Description", "Index")
+            </th>
+            <th>
+                @Html.ActionLink("Price", "Index", new { SortOrder = ViewBag.StandardCostSortParameter})
+            </th>
+            <th>
+                @Html.ActionLink("Category", "Index", new { SortOrder = ViewBag.SafetyStockLevelSortParameter, CurrentFilter = ViewBag.CurrentFilter })
+            </th>
+            <th>
+                @Html.ActionLink("Picture Link", "Index")
+            </th>
+            <th>
+                @Html.ActionLink("Created Date", "Index")
+            </th>
+            <th>
+                @Html.ActionLink("Modified Date", "Index")
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PictureLink)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ModifiedDate)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ProductID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.ProductID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ProductID })
+                </td>
+            </tr>
+        }
+    </table>
+<br />
+    page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("Index",
+    new { page, SortOrder = ViewBag.CurrentSort, CurrentFilter = ViewBag.CurrentFilter }))
